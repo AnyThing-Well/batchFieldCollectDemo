@@ -35,12 +35,12 @@ public class TranslateContext<T> where T : class
     }
 
     public TranslateContext<T> MapTranslation(
-        Expression<Func<T, string>> sourceExpr,
+        Func<T, string> sourceExpr,
         Expression<Func<T, string>> targetExpr)
     {
         if (sourceExpr == null || targetExpr == null) throw new ArgumentNullException();
 
-        var getter = sourceExpr.Compile();
+        // var getter = sourceExpr.Compile();
 
         // 解析目标属性
         if (targetExpr.Body is not MemberExpression member || member.Member is not PropertyInfo prop)
@@ -55,7 +55,7 @@ public class TranslateContext<T> where T : class
 
         foreach (var item in _items)
         {
-            var source = getter(item);
+            var source = sourceExpr(item);
             _translations.Add((item, source, setter));
         }
         return this;
