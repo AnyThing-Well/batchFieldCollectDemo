@@ -48,10 +48,10 @@ public class TranslateContext<T> where T : class
         if (!prop.CanWrite) throw new InvalidOperationException("属性不可写");
 
         // 构造 setter 委托： (T e, string v) => e.Prop = v;
-        var pEntity = Expression.Parameter(typeof(T), "e");
-        var pValue = Expression.Parameter(typeof(string), "v");
-        var assign = Expression.Assign(Expression.Property(pEntity, prop), pValue);
-        var setter = Expression.Lambda<Action<T, string>>(assign, pEntity, pValue).Compile();
+        var pEntity = Expression.Parameter(typeof(T), "e"); //创建一个类型为 T 的参数，名字叫 "e"
+        var pValue = Expression.Parameter(typeof(string), "v"); //创建一个类型为 string 的参数，名字叫 "v"
+        var assign = Expression.Assign(Expression.Property(pEntity, prop), pValue); // 创建赋值表达式 e.Prop = v
+        var setter = Expression.Lambda<Action<T, string>>(assign, pEntity, pValue).Compile(); // 创建 Lambda 表达式并编译成委托
 
         foreach (var item in _items)
         {
