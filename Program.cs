@@ -29,11 +29,17 @@ var users = new List<User>
 
 app.MapGet("/weatherforecast", async ([FromServices] TranslateService translateService) =>
 {
-    var res = await translateService
+    var res1 = await translateService
         .BuildCollect(users)
         .MapTranslation(a => a.IsEnable.GetDescription(), (a, translated) => a.IsEnableName = translated)
         .ExecuteAsync();
-    return res;
+
+    //自动生成 Setter
+    var res2 = await translateService
+        .BuildCollect(users)
+        .MapTranslation(a => a.IsEnable.GetDescription(), t => t.IsEnableName)
+        .ExecuteAsync();
+    return new { res1, res2 };
 })
 .WithName("GetWeatherForecast");
 

@@ -1,6 +1,6 @@
 public static class ExpressionBuilder
 {
-    public static TranslatedContext<T> BuildCollect<T>(IEnumerable<T> items, TranslateService? translateService) where T : class
+    public static TranslatedContext<T> BuildCollect<T>(IEnumerable<T> items, TranslateService translateService) where T : class
     {
         return new TranslatedContext<T>(items, translateService);
     }

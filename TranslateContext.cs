@@ -1,3 +1,6 @@
+using System.Linq.Expressions;
+using System.Reflection;
+
 public class TranslateContext<T> where T : class
 {
     private readonly TranslateService _service;
@@ -27,6 +30,33 @@ public class TranslateContext<T> where T : class
         {
             var result = selector(item);
             _translations.Add((item!, result, action));
+        }
+        return this;
+    }
+
+    public TranslateContext<T> MapTranslation(
+        Expression<Func<T, string>> sourceExpr,
+        Expression<Func<T, string>> targetExpr)
+    {
+        if (sourceExpr == null || targetExpr == null) throw new ArgumentNullException();
+
+        var getter = sourceExpr.Compile();
+
+        // 解析目标属性
+        if (targetExpr.Body is not MemberExpression member || member.Member is not PropertyInfo prop)
+            throw new InvalidOperationException("目标表达式必须是可写属性");
+        if (!prop.CanWrite) throw new InvalidOperationException("属性不可写");
+
+        // 构造 setter 委托： (T e, string v) => e.Prop = v;
+        var pEntity = Expression.Parameter(typeof(T), "e");
+        var pValue = Expression.Parameter(typeof(string), "v");
+        var assign = Expression.Assign(Expression.Property(pEntity, prop), pValue);
+        var setter = Expression.Lambda<Action<T, string>>(assign, pEntity, pValue).Compile();
+
+        foreach (var item in _items)
+        {
+            var source = getter(item);
+            _translations.Add((item, source, setter));
         }
         return this;
     }
