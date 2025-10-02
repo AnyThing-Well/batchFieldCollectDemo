@@ -1,0 +1,6 @@
+@batchFieldCollectDemo_HostAddress = http://localhost:5085
+
+GET {{batchFieldCollectDemo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

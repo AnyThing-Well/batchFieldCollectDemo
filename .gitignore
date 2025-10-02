@@ -1,0 +1,80 @@
+# .NET 9 / Visual Studio
+bin/
+obj/
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+# Build results
+[Dd]ebug*/
+[Rr]elease*/
+# VS Code
+.vscode/
+# Rider
+.idea/
+*.sln.iml
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+# DotCover
+*.dotCover
+# NCrunch
+*.ncrunch*
+.*crunch*.local.xml
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+# DotTrace
+*.dotTrace
+# TeamCity
+_TeamCity*
+# DotMemory
+*.dotMemory
+# Azure
+*.azurePubxml
+*.publishsettings
+# NuGet
+*.nupkg
+# Entity Framework
+*.jfm
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+# Windows shortcuts
+*.lnk
+# Others
+*.log
+*.vspscc
+*.vssscc
+*.dbmdl
+*.bak
+*.sql
+*.pdb
+*.cache
+*.zip
+*.7z
+*.tar.gz
+*.tar
+*.gz
+*.rar
+*.tmp
+*.temp
+*.swp
+*.swo
+*.DS_Store
+# Local history for JetBrains IDEs
+.localhistory/
