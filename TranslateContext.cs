@@ -7,7 +7,7 @@ public class TranslateContext<T> where T : class
     private readonly IEnumerable<T> _items;
     private readonly List<(T Item, string SourceText, Action<T, string> Action)> _translations;
 
-    private static Dictionary<(Type, string), Action<T, string>> _setterCache = [];
+    private static readonly Dictionary<string, Action<T, string>> _setterCache = [];
 
 
     public TranslateContext(TranslateService service, IEnumerable<T> items)
@@ -50,7 +50,7 @@ public class TranslateContext<T> where T : class
         if (!prop.CanWrite)
             throw new InvalidOperationException("属性不可写");
 
-        var key = (prop.DeclaringType ?? typeof(T), prop.Name);
+        var key = $"{typeof(T).FullName}:{prop.Name}";
 
         if (!_setterCache.TryGetValue(key, out var setter))
         {
