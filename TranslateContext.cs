@@ -7,6 +7,8 @@ public class TranslateContext<T> where T : class
     private readonly IEnumerable<T> _items;
     private readonly List<(T Item, string SourceText, Action<T, string> Action)> _translations;
 
+    private static Dictionary<(Type, string), Action<T, string>> _setterCache = [];
+
 
     public TranslateContext(TranslateService service, IEnumerable<T> items)
     {
@@ -45,14 +47,21 @@ public class TranslateContext<T> where T : class
         // 解析目标属性
         if (targetExpr.Body is not MemberExpression member || member.Member is not PropertyInfo prop)
             throw new InvalidOperationException("目标表达式必须是可写属性");
-        if (!prop.CanWrite) throw new InvalidOperationException("属性不可写");
+        if (!prop.CanWrite)
+            throw new InvalidOperationException("属性不可写");
 
-        // 构造 setter 委托： (T e, string v) => e.Prop = v;
-        var pEntity = Expression.Parameter(typeof(T), "e"); //创建一个类型为 T 的参数，名字叫 "e"
-        var pValue = Expression.Parameter(typeof(string), "v"); //创建一个类型为 string 的参数，名字叫 "v"
-        var assign = Expression.Assign(Expression.Property(pEntity, prop), pValue); // 创建赋值表达式 e.Prop = v
-        var setter = Expression.Lambda<Action<T, string>>(assign, pEntity, pValue).Compile(); // 创建 Lambda 表达式并编译成委托
+        var key = (prop.DeclaringType ?? typeof(T), prop.Name);
 
+        if (!_setterCache.TryGetValue(key, out var setter))
+        {
+            // 构造 setter 委托： (T e, string v) => e.Prop = v;
+            var pEntity = Expression.Parameter(typeof(T), "e"); //创建一个类型为 T 的参数，名字叫 "e"
+            var pValue = Expression.Parameter(typeof(string), "v"); //创建一个类型为 string 的参数，名字叫 "v"
+            var assign = Expression.Assign(Expression.Property(pEntity, prop), pValue); // 创建赋值表达式 e.Prop = v
+            setter = Expression.Lambda<Action<T, string>>(assign, pEntity, pValue).Compile(); // 创建 Lambda 表达式并编译成委托
+            _setterCache[key] = setter;
+            Console.WriteLine($"缓存新委托: {key}，当前缓存数量：{_setterCache.Count}");
+        }
         foreach (var item in _items)
         {
             var source = sourceExpr(item);

@@ -6,6 +6,7 @@ public static class ExpressionBuilder
     }
 }
 
+[Obsolete("请使用 TranslateContext")]
 public class TranslatedContext<T> where T : class
 {
     private readonly TranslateService _service;
@@ -31,10 +32,7 @@ public class TranslatedContext<T> where T : class
         {
             var result = selector(item);
             // 收集 item、枚举值、action
-            lock (_translations)
-            {
-                _translations.Add((item!, result!, action));
-            }
+            _translations.Add((item!, result!, action));
             yield return item;
         }
     }
